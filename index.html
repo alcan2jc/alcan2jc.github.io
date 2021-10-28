@@ -40,57 +40,74 @@
     <div class="page-header">
 
       <!-- Title and Name -->
-      <h1>Your Title Here</h1>
-      <span style="font-size: 20px; line-height: 1.5em;"><strong>John Alcantara, Alex Sablan, Matthew Trang</strong></span><br>
+      <h1>FutureHAUS Smarthome Mobile Application</h1>
+      <span style="font-size: 20px; line-height: 1.5em;"><strong>John Alcantara, Alex Sablan, Matthew
+          Trang</strong></span><br>
       <span style="font-size: 18px; line-height: 1.5em;">Fall 2021 ECE 4554/5554 Computer Vision: Course
         Project</span><br>
       <span style="font-size: 18px; line-height: 1.5em;">Virginia Tech</span>
       <hr>
 
-      Please see <a href="http://vision.cs.utexas.edu/projects/adapted_attributes/">this</a> for an example of how to
-      lay out the various details of your project. You may need to provide more details than this, because you will not
-      be submitting an associated paper to accompany the webpage. So the page should be self-contained.
-
       <!-- Goal -->
-      <h3>Abstract</h3>
+      <h3>Problem Statement</h3>
 
-      One or two sentences on the motivation behind the problem you are solving. One or two sentences describing the
-      approach you took. One or two sentences on the main result you obtained.
-      <br><br>
-      <!-- figure -->
-      <h3>Teaser figure</h3>
-      A figure that conveys the main idea behind the project or the main application being addressed.
-      <br><br>
-      <!-- Main Illustrative Figure -->
-      <div style="text-align: center;">
-        <!-- <img style="height: 200px;" alt="" src="mainfig.png"> -->
-      </div>
+      The goal of our project is to create an accurate image detection classification system for components of a smart
+      home,
+      specifically the FutureHAUS, which is an innovative modular designed building, built for the Solar Decathlon
+      Middle East Competition.
+      Our goal is to use the image detection algorithm we create to form an augmented reality application for mobile
+      devices.
+      The application will also detect house objects and will give options to control the objects. An example would be
+      pointing the app to a door and giving the option to open the door.
 
       <br><br>
-      <!-- Introduction -->
-      <h3>Introduction</h3>
-      Motivation behind the problem you are solving, what applications it has, any brief background on the particular
-      domain you are working in (if not regular RBG photographs), etc. If you are using a new way to solve an existing
-      problem, briefly mention and describe the existing approaches and tell us how your approach is new.
 
-      <br><br>
       <!-- Approach -->
       <h3>Approach</h3>
-      Describe very clearly and systematically your approach to solve the problem. Tell us exactly what existing
-      implementations you used to build your system. Tell us what obstacles you faced and how you addressed them.
-      Justify any design choices or judgment calls you made in your approach.
+      We first plan to gather a database of images of the devices, and use a variety of data augmentation techniques to
+      improve the database.
+      We will compare and contrast each augmentation technique, and test which combinations are ideal for training image
+      detection on low amounts of input data.
+      We plan on using Tensorflow to train an object detection algorithm for the devices that we want to control. We
+      will use transfer learning algorithms and
+      modify an existing classifier, such as a SSD_MobileNet, or a ResNet, that has been trained on the COCO dataset.
+      Currently, our plan is to test SSD’s,
+      Fast Recurrent Convolutional Neural Networks, and the YOLO algorithm, with other options added based on available
+      time. We hope to test the accuracy of the different models,
+      and compare the pros and cons to select the best one for our application. Then, after training a custom detection
+      model, we plan to convert it to a web model using Tensorflow.JS,
+      and use JavaScript and Angular.JS to create the Augmented Reality Interface in the web application. To control
+      house objects, we plan to use MQTT (Message Queue Telemetry Transport)
+      to send and receive formatted data to the application so it knows which house object to control.
 
       <br><br>
       <!-- Results -->
       <h3>Experiments and results</h3>
-      Provide details about the experimental set up (number of images/videos, number of datasets you experimented with,
-      train/test split if you used machine learning algorithms, etc.). Describe the evaluation metrics you used to
-      evaluate how well your approach is working. Include clear figures and tables, as well as illustrative qualitative
-      examples if appropriate. Be sure to include obvious baselines to see if your approach is doing better than a naive
-      approach (e.g. for classification accuracy, how well would a classifier do that made random decisions?). Also
-      discuss any parameters of your algorithms, and tell us how you set the values of those parameters. You can also
-      show us how the performance varies as you change those parameter values. Be sure to discuss any trends you see in
-      your results, and explain why these trends make sense. Are the results as expected? Why?
+      To test the code, we will utilize a handheld camera along with the algorithm to identify household objects that
+      are controllable. Currently, the idea is to use a microcontroller (most likely an Arduino Uno) and a breadboard to
+      mimic “household” appliances using an LED. For example, if we wanted to control the front door, we would point the
+      camera at the door. Once the door is identified, a prompt will appear for a specific number sequence to be
+      entered. If the sequence matches the password/PIN, the door unlocks, if not the door will lock or stay locked. To
+      mimic the door unlocking, a green LED will light up, otherwise a red LED will light up, indicating the door is
+      locked. To create the machine learning algorithm, we will use the TensorFlow library. To host the website we will
+      use Angular.JS and for the phone, we will use NGRok along with MQTT to send the data.
+
+      The dataset we will use is one that we collect ourselves by taking pictures of the devices. We will take
+      approximately 20 photos of each device from varying angles and distances, to create enough variance in each photo.
+      We will use the same camera, with a square aspect ratio to make data processing easier. The transfer learned
+      models will have pre trained on the COCO 2017 dataset.
+
+      We plan on borrowing existing code from the TensorFlow library that contains tutorials on the general process of
+      performing transfer learning. We will write our own code for the data augmentation, domain specific transfer
+      learning, and the entire mobile application.
+
+      The trials should reveal that the algorithm can correctly identify any household appliance or item that is within
+      the scope that we set. The scope entails which things we want to be able to identify around the house. The only
+      uncertainty would be whether the algorithm will misidentify something that is not within the scope. For example,
+      if it were to identify a couch as a refrigerator. A successful project will consist of a mobile application that
+      loads a custom object identifier with a minimum of 90% accuracy, and sends data correctly to configure house
+      objects.
+
 
       <br><br>
 
