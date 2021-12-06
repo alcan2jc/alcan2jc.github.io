@@ -28,11 +28,6 @@
   </style>
 
   <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
-
-  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-  <!--[if lt IE 9]>
-<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
 </head>
 
 <body>
@@ -48,68 +43,275 @@
       <span style="font-size: 18px; line-height: 1.5em;">Virginia Tech</span>
       <hr>
 
-      <!-- Goal -->
+      <h3>Abstract</h3>
+      In this project, we propose the usage of transfer learning to create an accurate object detection classification
+      system for
+      components of a smart home, specifically the FutureHAUS, which is an innovative modular designed building, built
+      for the Solar Decathlon
+      Middle East Competition. We were able to successfully train accurate classifiers using the Tensorflow Transfer
+      Learning API, and were able
+      to successfully create and demonstrate the usage of these classifiers in an
+      augmented reality web application, and show changes being made to a “smart home”, simulated on an Arduino.
+
       <h3>Problem Statement</h3>
+      The FutureHAUS is an innovative modular designed building that won first place in the Solar Decathlon Middle East
+      Competition in 2018.
+      To commemorate its achievements, we want to provide the FutureHAUS with an augmented reality application that
+      displays information and
+      detects its electrical components: which are the inverter, battery, solar panels, and charge controllers. The goal
+      of our project is to
+      create an accurate image detection classification system for the components, and use the model to simulate a smart
+      home application.
 
-      The goal of our project is to create an accurate image detection classification system for components of a smart
-      home,
-      specifically the FutureHAUS, which is an innovative modular designed building, built for the Solar Decathlon
-      Middle East Competition.
-      Our goal is to use the image detection algorithm we create to form an augmented reality application for mobile
-      devices.
-      The application will also detect house objects and will give options to control the objects. An example would be
-      pointing the app to a door and giving the option to open the door.
-
-      <br><br>
-
-      <!-- Approach -->
       <h3>Approach</h3>
-      We first plan to gather a database of images of the devices, and use a variety of data augmentation techniques to
-      improve the database.
-      We will compare and contrast each augmentation technique, and test which combinations are ideal for training image
-      detection on low amounts of input data.
-      We plan on using Tensorflow to train an object detection algorithm for the devices that we want to control. We
-      will use transfer learning algorithms and
-      modify an existing classifier, such as a SSD_MobileNet, or a ResNet, that has been trained on the COCO dataset.
-      Currently, our plan is to test SSD’s,
-      Fast Recurrent Convolutional Neural Networks, and the YOLO algorithm, with other options added based on available
-      time. We hope to test the accuracy of the different models,
-      and compare the pros and cons to select the best one for our application. Then, after training a custom detection
-      model, we plan to convert it to a web model using Tensorflow.JS,
-      and use JavaScript and Angular.JS to create the Augmented Reality Interface in the web application. To control
-      house objects, we plan to use MQTT (Message Queue Telemetry Transport)
-      to send and receive formatted data to the application so it knows which house object to control.
+      We first gathered a dataset of images of the devices, specifically, an inverter, charge controller, and battery.
+      The dataset we used is one that we collect ourselves by taking pictures of the devices using a mobile camera. We
+      took approximately 25 photos of each device from varying angles and distances, to create enough variance in each
+      photo. After collecting all the images, we downscaled the images to 640 pixels by 640 pixels, to facilitate the
+      learning process. We wrote code to mass convert files to the same picture format and rename them to make
+      processing easier. Then, we used the LabelImg tool to generate bounding boxes for each of the components that we
+      were testing for, and export these bounding boxes as XML files in the PASCAL VOC format. [4]
+
+      We used Tensorflow to train an object detection classifier for the devices that we want to control. Specifically,
+      we used Tensorflow’s Transfer Learning API to modify an existing classifier, such as a MobileNet, or a ResNet,
+      that has been trained on the COCO dataset. The Tensorflow Transfer Learning API has a variety of tutorials that we
+      used code from in order to perform the training, with alterations made for our specific training pipeline and
+      dataset. [1]. We also used code from online Tensorflow tutorials and edited them to suit our specific purpose, the
+      tutorials we used can be found at [2] and [3]. After training, we tested the accuracy of the different models, and
+      compared the results to select the best one for our augmented reality web application. The transfer learned models
+      are pre-trained on the COCO 2017 dataset. The models that we tested are as follows: CenterNet MobileNetV2 FPN
+      512x512, SSD MobileNet V2 FPNLite 640x640, SSD ResNet50 V1 FPN 640x640, and EfficientDet D1 640x640 from the
+      Tensorflow 2 Detection Model Zoo [5]. These models are readily available on GitHub from Tensorflow.
+
+      The detection speed and mean average precision (mAP) values for the models we used are as follows. A lower
+      detection speed means that the classification will be performed faster, which will result in more frequent
+      detections that are better able to keep up with a moving camera. A higher mean average precision means that the
+      model is better at accurately classifying objects. These results were gathered on the COCO-17 dataset by
+      Tensorflow. We chose this selection of models because they are the ones which output bounding boxes, and have a
+      good range of detection speeds and precisions to compare.
+      <br><br>
+      <br><br>
+
+      <div class="center">
+        <img src="assets/tf2zoo.PNG">
+      </div>
+      <br><br>
+      <br><br>
+
+      Then, after training a custom detection model and exporting it to a saved model, we converted it to a web model
+      using Tensorflow.JS. Tensorflow.JS is a library written by Tensorflow that allows users to use Machine Learning
+      Models directly in the browser, meaning we could embed our trained model into the web application. We also used
+      JavaScript and Angular.JS to create the Augmented Reality Interface in the web application. To control the
+      simulated FutureHAUS components, we plan to use MQTT (Message Queue Telemetry Transport) to send and receive
+      formatted data to the application so it knows which component to control. The smart home application is simulated
+      using an Arduino, breadboard, and three different color LEDs. Each LED signifies one of the three FutureHAUS
+      components. Once it receives a command from the MQTT broker, then one of the LEDs lights up, meaning that an
+      action has been received.
 
       <br><br>
+
+      We ran into a number of obstacles during this process. At first, when training the custom object detector, we were
+      unable to get a resulting classifier that functioned properly. The classifier would misclassify white space as
+      devices and would struggle to detect the actual devices. After debugging, we found that this was due to an error
+      in the LabelImg program where portrait images are treated as landscape images, which was unnoticed by us since our
+      photos are square resolutions. The result was misplaced bounding boxes, such as the one below, which we were able
+      to discover by running the TFRecord Viewer program found on GitHub. [6]
+
+      <br><br>
+      <br><br>
+      <div class="center">
+        <img src="assets/bound_error.PNG">
+      </div>
+      <br><br>
+
+      After discovering this error, we rotated the images that were incorrectly bound and relabeled them, resulting in
+      proper bounding boxes such as the following. With correctly labeled data, our models were successfully able to
+      perform object detection.
+      <br><br>
+
+      <div class="center">
+        <img src="assets/correct_bound.PNG">
+      </div>
+      <br><br>
+      The hardware simply acts as an indication of what the model identifies in the picture
+      <br><br>
+      <br><br>
+
       <!-- Results -->
       <h3>Experiments and results</h3>
-      To test the code, we will utilize a handheld camera along with the algorithm to identify household objects that
-      are controllable. Currently, the idea is to use a microcontroller (most likely an Arduino Uno) and a breadboard to
-      mimic “household” appliances using an LED. For example, if we wanted to control the front door, we would point the
-      camera at the door. Once the door is identified, a prompt will appear for a specific number sequence to be
-      entered. If the sequence matches the password/PIN, the door unlocks, if not the door will lock or stay locked. To
-      mimic the door unlocking, a green LED will light up, otherwise a red LED will light up, indicating the door is
-      locked. To create the machine learning algorithm, we will use the TensorFlow library. To host the website we will
-      use Angular.JS and for the phone, we will use NGRok along with MQTT to send the data.
+      To test the code, we will utilize a laptop camera along with the algorithm to identify the three main FutureHAUS
+      components, which are the battery, inverter, and charge controllers. The idea is to use an arduino and a
+      breadboard to mimic controlling the components using an LED. For example, if we wanted to check information about
+      the inverter, we would point the camera at the inverter. Once the inverter is identified, a list of information
+      about the inverter will display on the screen such as the current, inverter power, etc. To create the machine
+      learning algorithm, we will use the TensorFlow library. To host the website we will use Angular. MQTT will be used
+      to send data between the arduino and the website.
 
-      The dataset we will use is one that we collect ourselves by taking pictures of the devices. We will take
-      approximately 20 photos of each device from varying angles and distances, to create enough variance in each photo.
-      We will use the same camera, with a square aspect ratio to make data processing easier. The transfer learned
-      models will have pre trained on the COCO 2017 dataset.
-
-      We plan on borrowing existing code from the TensorFlow library that contains tutorials on the general process of
-      performing transfer learning. We will write our own code for the data augmentation, domain specific transfer
-      learning, and the entire mobile application.
-
-      The trials should reveal that the algorithm can correctly identify any household appliance or item that is within
-      the scope that we set. The scope entails which things we want to be able to identify around the house. The only
-      uncertainty would be whether the algorithm will misidentify something that is not within the scope. For example,
-      if it were to identify a couch as a refrigerator. A successful project will consist of a mobile application that
-      loads a custom object identifier with a minimum of 90% accuracy, and sends data correctly to configure house
-      objects.
-
-
+      The trials should reveal that the algorithm can correctly identify one of the three FutureHAUS components. A
+      successful project will consist of a smart home application that loads a custom object identifier with a minimum
+      of 90% accuracy, and sends data correctly to configure house objects.
       <br><br>
+      <h4>Training</h4>
+      For training the classifier, we used a 90% train, 10% test split. In total, we had 69 photos in our training set,
+      and 8 photos in our testing set. There were around 25 images of each of the three components, in order to ensure
+      that each component is trained on equally. We used Tensorboard logs to keep track of training, and document which
+      model was performing well based on training loss.
+
+      The models were trained for 10,000 steps with batch sizes of 2. We chose 10,000 steps as it was generally enough
+      to ensure an accurately trained classifier, and at this amount of training, the loss tended to level out. The
+      batch size of 2 was chosen as it was the maximum amount we could store in memory on our computers. With more
+      training steps, it is expected that the loss decreases slightly by the end, or stays constant. With a larger batch
+      size, it is expected that the training would converge faster, and reach the same value for loss in a lesser amount
+      of steps.
+
+      We found that the results of the loss matched our results from testing on output images. In the following graph,
+      the total loss for three of the models can be seen throughout training, and at step 10,000, it can be seen that
+      the model that transfer learned from the SSD_MobileNet resulted in the lowest total loss of 0.122 compared to 0.22
+      for the SSD_MobileNet instance trained with various image augmentation techniques, and 0.27 for the SSD_ResNet50
+      model. These results are consistent with the results acquired by running the models on the testing dataset and
+      seeing what the output bounding boxes are.
+      <br><br>
+
+      <div class=center>
+        <img src="assets/Loss.PNG">
+      </div>
+      <br><br>
+
+      In this figure you can see the four different models outputting bounding boxes for an input image of an inverter.
+      The confidence value for each classifier can be seen in the label box. The SSD MobileNet V2 correctly identified
+      the inverter with 100% confidence. The CenterNet_ResNet model identified the inverter with 75% confidence, and
+      also incorrectly placed a bounding box for the battery on a sheet of metal. The SSD ResNet50 V1 model classified
+      it with 90% confidence. Finally, the EfficientDet model was able to detect the inverter with 97% accuracy. Thus,
+      the SSD MobileNet V2 was the most effective model.
+      <br><br>
+
+      <div class=center>
+        <img src="assets/inverter.PNG">
+      </div>
+      <br><br>
+
+      Speed detection is important for mobile applications, which has less overall performance than computers. The
+      figure below shows how each custom model performs when loaded into the angular website. The times were calculated
+      by averaging the first three detection times when detecting an inverter image. From our results, the SSD MobileNet
+      V2 detected objects the fastest compared to the other three models. Thus, we selected the SSD MobileNet V2 as our
+      model for the web application.
+      <br><br>
+
+      <div class=center>
+        <img src="assets/model_times.PNG">
+      </div>
+      <br><br>
+
+      <h4>Augmentation techniques</h4>
+      We then tested the effects of training a classifier with different data augmentation techniques. We applied the
+      following augmentations to the input data:
+      <ul>
+        <li>Random Scale Crop and Pad</li>
+        <li>Normalize Image</li>
+        <li>Random Horizontal Flip</li>
+        <li>Random Vertical Flip</li>
+        <li>Random Rotation of 90 degrees</li>
+        <li>Random Pixel Value Scale</li>
+        <li>Random Image Scale</li>
+        <li>Random RGB to Grayscale</li>
+        <li>Random Adjustment of Brightness</li>
+        <li>Random Adjustment of Contrast</li>
+        <li>Random Adjustment of Hue</li>
+        <li>Random Adjustment of Saturation</li>
+        <li>Random Distortion of Color</li>
+        <li>Random Jitter of the Bounding Boxes</li>
+        <li>Random Cropping of the Images</li>
+      </ul>
+      <br><br>
+
+      The resulting classifier was less accurate than the SSD_MobileNet_V2 model that was trained without the image
+      augmentation. The confidence in predictions for the charge controller and inverter were down significantly
+      compared to that of the one without augmentations. Additionally, in the all components test, the augmented model
+      placed a bounding box around the entire right side of the image for the battery, which was incorrect. It is
+      possible that we used too many different augmentation techniques, which made it more difficult for the classifier
+      to converge. In the future, additional testing could be done to test for a longer amount of time to see if
+      additional training would solve the issue, or with smaller combinations of the chosen augmentations.
+      <br><br>
+      <div class="center">
+        <img src="assets/augmented.PNG">
+      </div>
+      <br><br>
+      <br><br>
+
+      <h4>Qualitative Results</h4>
+      The figure below shows each model's performance with detecting images with one of each component, and then a final
+      image of all the components.
+      <div class="center">
+        <img src="assets/detections.PNG">
+      </div>
+      <br><br>
+
+      The video below is a demo of the custom model loaded into the angular website, and detecting the components.
+      <div class="center">
+        <video controls style="object-fit: fill;" width=750 height=500 src="assets/Mobilenet-detection-vid.mp4"></video>
+      </div>
+      <br><br>
+
+      The video below shows the smart home simulation using an arduino and LEDs. 
+      <div class="center">
+        <video controls style="object-fit: fill;" width=750 height=500 src="assets/led_demo.mov"></video>
+      </div>
+      <br><br>
+      <br><br>
+
+      <h3>Conclusion</h3>
+      In summary, we used various existing object detection models for transfer learning of our custom object detection
+      model for FutureHAUS electrical components, and compared their performance based on accuracy and speed. We found
+      that the SSD MobileNet V2 model had the best performance out of the four models with an average detection time of
+      425.3 ms and a 100% confidence when detecting the inverter. This custom model will be loaded into an angular
+      server that loads a camera and uses the model to detect the components, and also displays information about the
+      detected components. An arduino is used to simulate a smart home application that reads commands from the website
+      and simulates actions based on LEDs. To make our approach better we could have trained the model longer, since we
+      had limited the training to 10,000 steps for ease of comparison. We could have also taken more angled pictures of
+      the components.
+      <br><br>
+      <br><br>
+
+      <h3>References</h3>
+      <ol>
+        <li>
+          L. Vladimirov, “Tensorflow 2 object detection API tutorial¶,” TensorFlow 2 Object Detection API tutorial
+          -
+          TensorFlow 2 Object Detection API tutorial documentation. [Online]. Available:
+          https://tensorflow-object-detection-api-tutorial.readthedocs.io/en/latest/index.html. [Accessed: 01-Dec-2021].
+        </li>
+        <br>
+        <li>
+          M. Tanonwong, “Custom object detection using tensorflow in google colab,” Medium, 08-Jul-2020. [Online].
+          Available:
+          https://medium.com/@matus.tanon/custom-object-detection-using-tensorflow-in-google-colab-e4d6e1a17f18.
+          [Accessed: 01-Dec-2021].
+        </li>
+        <br>
+        <li>
+          H. Zanini, “Custom object detection in the browser using Tensorflow.js,” The TensorFlow Blog, 02-Jan-2021.
+          [Online]. Available: https://blog.tensorflow.org/2021/01/custom-object-detection-in-browser.html. [Accessed:
+          02-Dec-2021].
+        </li>
+        <br>
+        <li>
+          Tzutalin, “Tzutalin/labelimg: 🖍️ LabelImg is a graphical image annotation tool and label object bounding
+          boxes in images,” GitHub. [Online]. Available: https://github.com/tzutalin/labelImg. [Accessed: 03-Dec-2021].
+        </li>
+        <br>
+        <li>
+          Tensorflow, “Models/tf2_detection_zoo.MD at master · Tensorflow/models,” GitHub, 07-May-2021. [Online].
+          Available:
+          https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md.
+          [Accessed: 04-Dec-2021].
+        </li>
+        <br>
+        <li>
+          Sulc, “SULC/tfrecord-viewer: TFRecord viewer for browsing contents of TFRecords with object
+          detection/classification annotations.,” GitHub. [Online]. Available: https://github.com/sulc/tfrecord-viewer.
+          [Accessed: 05-Dec-2021].
+        </li>
+      </ol>
 
       <hr>
       <footer>

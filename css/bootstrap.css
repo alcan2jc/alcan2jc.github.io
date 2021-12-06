@@ -6040,3 +6040,20 @@ a.badge:hover {
 .affix {
   position: fixed;
 }
+
+.center {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+
+ol {
+  counter-reset: list;
+}
+ol > li {
+  list-style: none;
+}
+ol > li:before {
+  content: "[" counter(list, number) "] ";
+  counter-increment: list;
+}
